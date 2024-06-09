@@ -1,7 +1,7 @@
 const XLSX = require('xlsx');
-const Excel = require('exceljs');
+
 const stringSimilarity = require('string-similarity');
-const { sendPost } = require('./router');
+
 const fs = require('fs');
 
 class FileManager {
@@ -27,21 +27,6 @@ class FileManager {
 
     getWordsArray = (str) => {
         return this.cleanString(str).split(/\s+/);
-    }
-
-    sendStatus = async (filter, process, ms) => {
-        if (Date.now() - this.time > ms) {
-            try {
-                this.time = Date.now();
-                await sendPost('files/update-handler-status', {
-                    status: {
-                        filter, process
-                    }
-                })
-            } catch (e) {
-                console.log(e);
-            }
-        }
     }
 
     removeFileName = (str) => {
