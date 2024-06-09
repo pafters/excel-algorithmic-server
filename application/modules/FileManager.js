@@ -98,7 +98,32 @@ class FileManager {
             }
         }
         return { cashProducts, uniqueProductsArray, duplicates };
+    }
 
+    removeIdenticalByCash(cash, products) {
+        const uniqueProductsArray = [];
+        const uniqueProducts = {};
+        const duplicates = [];
+        const cashProducts = [];
+        for (let i = 0; i < cash.length; i++) {
+            if (cash[i]) {
+                let hash = cash[i];
+                if (!uniqueProducts.hasOwnProperty(hash)) {
+                    uniqueProducts[hash] = i;
+                    uniqueProductsArray.push(products[i]);
+                    cashProducts.push(hash);
+                    continue;
+                }
+                else {
+                    // Если да, добавим в массив дубликатов информацию о дублирующейся записи.
+                    duplicates.push({
+                        original: products[i],
+                        duplicate: products[uniqueProducts[hash]],
+                    });
+                }
+            }
+        }
+        return { cashProducts, uniqueProductsArray, duplicates };
     }
 
     removeDuplicates = async (products) => {
@@ -246,7 +271,6 @@ class FileManager {
                     maxLen = array[i].length;
                     for (let j = 0; j < array[i].length; j++) {
                         if (array[i][j]) {
-                            console.log(array[i][j], j);
                             index = j;
                             break;
                         }
@@ -271,13 +295,13 @@ class FileManager {
         }).filter(item => item !== undefined);
     }
 
-    addToMainTable = async ({ tableNameMain, tableDataMain }, { tableNameForeign, tableDataForeign }) => {
-        const newTableDataMain = this.getNames(tableDataMain)
-        const newTableDataForeign = this.getProductNames(tableDataForeign);
-        const mainArray = await this.removeDuplicates(newTableDataForeign, newTableDataMain, true);
-        const groups = await this.getGroups(mainArray);
+    addToMainTable = async (cash, products) => {
+        const { cashProducts, uniqueProductsArray, duplicates } = this.removeIdenticalByCash(cash, products);
+        console.log('Слияние', products.length, uniqueProductsArray.length)
+        console.log('Удалено при слиянии', products.length - uniqueProductsArray.length)
+        const groups = this.getGroups(uniqueProductsArray);
         if (groups)
-            return { msg: { groups }, status: 200 };
+            return { msg: { groups, cash: { products_name: uniqueProductsArray, clean: cashProducts } }, status: 200 };
         else return { msg: { err: 'Ошибка обработки' }, status: 500 };
     }
 

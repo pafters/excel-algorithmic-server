@@ -18,8 +18,9 @@ class FileController {
     }
 
     async addToMainTable(req, res) {
-        const { mainTable, foreignTable } = req.body;
-        const data = await FileManager.addToMainTable(mainTable, foreignTable);
+        const { cash, products } = req.body;
+        console.log(cash.length, products.length)
+        const data = await FileManager.addToMainTable(cash, products);
         if (data) {
             res.status(data.status).send(data.msg);
         } else res.status(500).send({ err: 'Что то пошло не так' });
