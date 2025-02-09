@@ -1,21 +1,18 @@
 require('dotenv').config();
 
-const express = require('express'); //Строка 1
-const app = express(); //Строка 2
+const express = require('express');
+const app = express();
 
-const PORT = process.env.SERVER_PORT || 5060; //Строка 3
+const PORT = process.env.SERVER_PORT || 5060;
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const fileUpload = require('express-fileupload');
 
-const baseRouter = require('./application/routes/baseRouter');
+const baseRouter = require('./application/routes');
 
 app.use(cors({
-    'allowedHeaders': ['sessionId', 'Content-Type', 'AuthorizationToken'],
-    'exposedHeaders': ['sessionId'],
-    'origin': '*',
-
-    'methods': 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    'allowedHeaders': ['Content-Type'],
+    'origin': 'http://localhost:5000',
+    'methods': 'GET,POST',
     'preflightContinue': false
 }));
 
@@ -24,10 +21,6 @@ app.use(bodyParser.urlencoded({ limit: "500mb", extended: true, parameterLimit: 
 
 
 app.use('/api', baseRouter);
-
-app.use(fileUpload({
-    createParentPath: true
-}));
 
 const start = async () => {
     try {
