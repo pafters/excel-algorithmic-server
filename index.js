@@ -6,7 +6,6 @@ const app = express();
 const PORT = process.env.SERVER_PORT || 5060;
 const cors = require('cors');
 const bodyParser = require('body-parser');
-
 const baseRouter = require('./application/routes');
 
 app.use(cors({
@@ -18,7 +17,6 @@ app.use(cors({
 
 app.use(bodyParser.json({ limit: "500mb" }))
 app.use(bodyParser.urlencoded({ limit: "500mb", extended: true, parameterLimit: 500000 }))
-
 
 app.use('/api', baseRouter);
 

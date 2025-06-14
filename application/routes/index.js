@@ -3,6 +3,6 @@ const router = new Router();
 
 const AlgorithmicRouter = require('./algorithmic.router');
 
-router.use('/files', AlgorithmicRouter);
+router.use('/algorithmic', AlgorithmicRouter);
 
 module.exports = router;

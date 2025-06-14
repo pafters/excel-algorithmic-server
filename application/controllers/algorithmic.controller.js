@@ -6,7 +6,7 @@ class AlgorithmicController {
         const { tableData } = req.body;
         if (tableData) {
             const tableDataObj = AlgorithmicService.getProductNames(tableData, null);
-            const data = await AlgorithmicService.fileUpload(tableDataObj);
+            const data = await AlgorithmicService.handleTableData(tableDataObj);
             if (data) {
                 res.status(data.status).send(data.msg);
             } else res.status(500).send({ err: 'Что то пошло не так' });
