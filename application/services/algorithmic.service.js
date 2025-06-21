@@ -8,11 +8,12 @@ class AlgorithmicService {
         "a": "а", 's': 'с', 'k': 'к',
         'b': 'б', 'j': 'ж', 'i': 'и',
         'v': 'в', 'd': 'д', 'u': 'у',
-        'п': 'г', 't': 'т', 'm': 'м',
+        'g': 'г', 't': 'т', 'm': 'м',
         "o": "о", 'l': 'л', 'z': 'з',
         "e": "е", 'r': 'р', 'n': 'н',
-        "c": "с", 'h': 'х',
-        "p": "п", 'f': 'ф',
+        "c": "с", 'h': 'х', 'x': 'х',
+        "p": "п", 'f': 'ф', 'w': 'в',
+        "q": "к", "y": "и"
     };
 
     constructor() { }
@@ -55,27 +56,30 @@ class AlgorithmicService {
         for (let i = 0; i < products.length; i++) {
             if (products[i]?.product_name) {
                 let product = products[i].product_name;
-
+                // console.log(111, product);
                 // Преобразуем строку в нижний регистр
                 let canonicalProduct = product.toLowerCase();
-
+                // console.log(112, product);
                 // Заменяем латинские буквы на кириллические и наоборот
                 for (let letter in this.alphabetMap) {
                     canonicalProduct = canonicalProduct.replace(new RegExp(letter, "g"), this.alphabetMap[letter]);
                 }
-
+                // console.log(113, canonicalProduct)
                 // Удаляем лишние пробелы и другие символы
-                const trimmedProduct = canonicalProduct.replace(/[^a-zA-Zа-яА-Я0-9ёЁ]/g, "").trim();
-
+                const trimmedProduct = canonicalProduct.replace(/[^a-zA-Zа-яА-Я0-9ёЁ]/g, " ").trim();
+                // console.log(114, trimmedProduct)
                 // Разделяем слова в строке по пробелу и сортируем их в алфавитном порядке
-                const sortedWords = trimmedProduct.split(" ").sort().join(" ").trim();
-
+                let sortedWords = trimmedProduct.split(" ");
+                // console.log(115, sortedWords);
+                sortedWords = sortedWords.sort((a, b) => a.trim().localeCompare(b.trim(), 'ru', { sensitivity: 'base' }));
+                sortedWords = sortedWords.join("").trim();
                 // Проверим находится ли уже строка в массиве уникальных записей.
                 if (!uniqueProducts.hasOwnProperty(sortedWords)) {
                     // Если нет, добавим продукт в объект и в новый массив uniqueProductsArray.
                     uniqueProducts[sortedWords] = i;
                     uniqueProductsArray.push(product);
                     cashProducts.push(sortedWords);
+                    // console.log(sortedWords)
                     continue;
                 } else {
                     // Если да, добавим в массив дубликатов информацию о дублирующейся записи.
@@ -122,7 +126,6 @@ class AlgorithmicService {
                 .replace(/\b\w{1,2}\b/g, '')
                 .replace(/[^а-яА-Я\sёЁ]/g, ' ')
                 .replace(/\s+/g, " ");
-
             const words2 = prefix.split(' ').filter(word => {
                 return !ban2.some(bannedWord => word === bannedWord);
             });
@@ -136,7 +139,6 @@ class AlgorithmicService {
 
             const keys = Object.keys(sections[sectionName]);
             let indexValue = null;
-
             keys.forEach((key, i) => {
                 const wordCounts = key.toLowerCase().split(' ').length;
                 const similarity = stringSimilarity.compareTwoStrings(key.toLowerCase(),
